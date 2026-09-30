@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP001",
+  "name": "Non-SARGable Date Filter",
+  "description": "Query optimization using SARGable predicates.",
+  "setupScript": "scripts/exp001/setup.sql",
+  "baselineScript": "scripts/exp001/baseline.sql",
+  "optimizedScript": "scripts/exp001/optimized.sql",
+  "cleanupScript": "scripts/exp001/cleanup.sql"
+}

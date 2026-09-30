@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Dugout.Contracts/Dugout.Contracts.csproj" />
+    <Project Path="src/Dugout.Runner/Dugout.Runner.csproj" />
+    <Project Path="src/Dugout.Storage/Dugout.Storage.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Dugout.Runner.Tests/Dugout.Runner.Tests.csproj" />
+  </Folder>
+</Solution>
