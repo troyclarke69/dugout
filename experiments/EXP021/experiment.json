@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP021",
+  "name": "Window Function vs Arithmetic Aggregate",
+  "description": "Compare a running-total window with its equivalent closed-form result for the seeded identity sequence.",
+  "category": "Window Functions",
+  "difficulty": "Advanced",
+  "tags": ["WindowFunction", "RunningTotal", "Sort"],
+  "learningObjectives": ["Recognize window operators and ordering requirements.", "State the assumptions behind an equivalent aggregate formulation."],
+  "baselineScript": "../shared/EXP021-baseline.sql",
+  "optimizedScript": "../shared/EXP021-optimized.sql"
+}

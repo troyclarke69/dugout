@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP014",
+  "name": "Skewed Data Distribution",
+  "description": "Create a controlled hot-key distribution and compare a hot-key estimate with a cold-key estimate.",
+  "category": "Parameter Sniffing",
+  "difficulty": "Advanced",
+  "tags": ["Skew", "Cardinality", "ParameterSniffing"],
+  "learningObjectives": ["Recognize data skew.", "Compare estimated and actual row counts for hot and cold keys."],
+  "setupScript": "../shared/EXP014-setup.sql",
+  "baselineScript": "../shared/EXP014-baseline.sql",
+  "optimizedScript": "../shared/EXP014-optimized.sql",
+  "cleanupScript": "../shared/EXP014-cleanup.sql"
+}

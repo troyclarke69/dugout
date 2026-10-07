@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP006",
+  "name": "Composite Index Key Ordering",
+  "description": "Use a composite CustomerId and OrderDate index with seekable predicates.",
+  "category": "Indexing",
+  "difficulty": "Advanced",
+  "tags": ["CompositeIndex", "KeyOrder", "SARGability"],
+  "learningObjectives": ["Explain the leftmost-prefix behavior of composite indexes.", "Observe seek predicates and residual predicates."],
+  "setupScript": "../shared/EXP006-setup.sql",
+  "baselineScript": "../shared/EXP006-baseline.sql",
+  "optimizedScript": "../shared/EXP006-optimized.sql",
+  "cleanupScript": "../shared/EXP006-cleanup.sql"
+}

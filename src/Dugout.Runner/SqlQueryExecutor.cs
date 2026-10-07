@@ -9,11 +9,15 @@ public sealed class SqlQueryExecutor : IQueryExecutor
 {
     private readonly string _connectionString;
     private readonly SqlConnection _connection;
+    private readonly ISqlMetricsCollector _metricsCollector;
+    private readonly IExecutionPlanCollector _executionPlanCollector;
 
     public SqlQueryExecutor(string connectionString)
     {
         _connectionString = connectionString;
         _connection = new SqlConnection(connectionString);
+        _metricsCollector = new SqlMetricsCollector(_connection);
+        _executionPlanCollector = new SqlExecutionPlanCollector(_connection);
     }
 
     public async Task OpenAsync(CancellationToken cancellationToken = default)
@@ -105,6 +109,16 @@ public sealed class SqlQueryExecutor : IQueryExecutor
         return rowCount;
     }
 
+    public Task<SqlExecutionMetrics> ExecuteQueryWithMetricsAsync(string sql, CancellationToken cancellationToken = default)
+    {
+        return _metricsCollector.ExecuteAsync(sql, cancellationToken);
+    }
+
+    public Task<ExecutionPlanArtifact> CaptureExecutionPlanAsync(string sql, CancellationToken cancellationToken = default)
+    {
+        return _executionPlanCollector.CaptureAsync(sql, cancellationToken);
+    }
+
     public async Task<object?> ExecuteScalarAsync(string sql, CancellationToken cancellationToken = default)
     {
         await using var command = new SqlCommand(sql, _connection)
@@ -130,7 +144,7 @@ public sealed class SqlQueryExecutor : IQueryExecutor
     {
         var sqlServerVersion = await ExecuteScalarAsync("SELECT @@VERSION;", cancellationToken) as string ?? string.Empty;
         var edition = await ExecuteScalarAsync("SELECT CAST(SERVERPROPERTY('Edition') AS nvarchar(255));", cancellationToken) as string ?? string.Empty;
-        var maxDop = await ExecuteScalarAsync("SELECT @@MAXDOP;", cancellationToken);
+        var maxDop = await ExecuteScalarAsync("SELECT value_in_use FROM sys.configurations WHERE name = 'max degree of parallelism';", cancellationToken);
         var costThreshold = await ExecuteScalarAsync("SELECT value_in_use FROM sys.configurations WHERE name = 'cost threshold for parallelism';", cancellationToken);
         var maxServerMemory = await ExecuteScalarAsync("SELECT value_in_use FROM sys.configurations WHERE name = 'max server memory (MB)';", cancellationToken);
 

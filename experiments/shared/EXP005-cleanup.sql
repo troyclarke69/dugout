@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS IX_P6_Orders_2025 ON dbo.Orders;

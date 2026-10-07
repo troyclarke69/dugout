@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP002",
+  "name": "Missing Covering Index",
+  "description": "Compare a narrow index that requires lookups with a covering index.",
+  "category": "Indexing",
+  "difficulty": "Intermediate",
+  "tags": ["Index", "Covering", "Lookup"],
+  "learningObjectives": ["Distinguish key lookups from covering access.", "Compare logical reads for equivalent index paths."],
+  "setupScript": "../shared/EXP002-setup.sql",
+  "baselineScript": "../shared/EXP002-baseline.sql",
+  "optimizedScript": "../shared/EXP002-optimized.sql",
+  "cleanupScript": "../shared/EXP002-cleanup.sql"
+}

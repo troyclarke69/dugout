@@ -3,6 +3,13 @@
   "id": "EXP001",
   "name": "Non-SARGable Date Filter",
   "description": "Query optimization using SARGable predicates.",
+  "category": "SARGability",
+  "difficulty": "Beginner",
+  "tags": ["Date", "Predicate", "Index Seek"],
+  "learningObjectives": [
+    "Recognize non-SARGable predicates.",
+    "Compare scan and seek behavior for date filters."
+  ],
   "setupScript": "scripts/exp001/setup.sql",
   "baselineScript": "scripts/exp001/baseline.sql",
   "optimizedScript": "scripts/exp001/optimized.sql",

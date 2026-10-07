@@ -9,6 +9,8 @@ public interface IQueryExecutor : IDisposable
     Task<(bool IsValid, string? Message)> ValidateDatasetAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Dictionary<string, object?>>> ExecuteQueryAsync(string sql, CancellationToken cancellationToken = default);
     Task<long> ExecuteQueryAndCountAsync(string sql, CancellationToken cancellationToken = default);
+    Task<SqlExecutionMetrics> ExecuteQueryWithMetricsAsync(string sql, CancellationToken cancellationToken = default);
+    Task<ExecutionPlanArtifact> CaptureExecutionPlanAsync(string sql, CancellationToken cancellationToken = default);
     Task<object?> ExecuteScalarAsync(string sql, CancellationToken cancellationToken = default);
     Task ExecuteNonQueryAsync(string sql, CancellationToken cancellationToken = default);
     Task<EnvironmentSummary> GetEnvironmentAsync(string runnerVersion, CancellationToken cancellationToken = default);

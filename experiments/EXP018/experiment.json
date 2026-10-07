@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP018",
+  "name": "TempDB Sort and Spill Signals",
+  "description": "Exercise a large sort and inspect TempDB allocation and spill-related plan evidence.",
+  "category": "TempDB",
+  "difficulty": "Advanced",
+  "tags": ["TempDB", "Sort", "Spill"],
+  "learningObjectives": ["Inspect TempDB page deltas.", "Recognize sort and spill indicators in runtime plans."],
+  "baselineScript": "../shared/EXP018-baseline.sql",
+  "optimizedScript": "../shared/EXP018-optimized.sql"
+}

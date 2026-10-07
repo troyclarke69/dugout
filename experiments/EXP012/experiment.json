@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP012",
+  "name": "Stream Aggregate",
+  "description": "Encourage ordered input for aggregation and inspect whether sorting is required.",
+  "category": "Aggregations",
+  "difficulty": "Intermediate",
+  "tags": ["StreamAggregate", "Ordering", "GroupBy"],
+  "learningObjectives": ["Identify stream aggregates.", "Relate input ordering to sort operators."],
+  "baselineScript": "../shared/EXP012-baseline.sql",
+  "optimizedScript": "../shared/EXP012-optimized.sql"
+}

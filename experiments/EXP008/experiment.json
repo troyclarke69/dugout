@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP008",
+  "name": "Merge Join",
+  "description": "Compare merge and hash join plans for equivalent ordered-key inputs.",
+  "category": "Joins",
+  "difficulty": "Advanced",
+  "tags": ["MergeJoin", "HashJoin", "Join"],
+  "learningObjectives": ["Identify merge-join input ordering requirements.", "Observe sort costs in a merge plan."],
+  "baselineScript": "../shared/EXP008-baseline.sql",
+  "optimizedScript": "../shared/EXP008-optimized.sql"
+}

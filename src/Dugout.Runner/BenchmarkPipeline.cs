@@ -7,10 +7,14 @@ namespace Dugout.Runner;
 public sealed class BenchmarkPipeline
 {
     private readonly IQueryExecutor _queryExecutor;
+    private readonly IBenchmarkRepository? _benchmarkRepository;
+    private readonly IAdvisorEngine _advisorEngine;
 
-    public BenchmarkPipeline(IQueryExecutor queryExecutor)
+    public BenchmarkPipeline(IQueryExecutor queryExecutor, IBenchmarkRepository? benchmarkRepository = null, IAdvisorEngine? advisorEngine = null)
     {
         _queryExecutor = queryExecutor;
+        _benchmarkRepository = benchmarkRepository;
+        _advisorEngine = advisorEngine ?? new AdvisorEngine();
     }
 
     public async Task<BenchmarkResultDocument> RunAsync(
@@ -42,6 +46,7 @@ public sealed class BenchmarkPipeline
         };
 
         string? failureStage = null;
+        var repositoryInitialized = false;
 
         void ReportStage(string stage)
         {
@@ -96,6 +101,13 @@ public sealed class BenchmarkPipeline
                 return result;
             }
 
+            if (_benchmarkRepository is not null)
+            {
+                ReportStage("Initializing Results Repository");
+                await _benchmarkRepository.InitializeAsync(cancellationToken);
+                repositoryInitialized = true;
+            }
+
             try
             {
                 if (!string.IsNullOrWhiteSpace(experiment.SetupScript))
@@ -135,6 +147,11 @@ public sealed class BenchmarkPipeline
                     return result;
                 }
 
+                ReportStage("Capturing Execution Plans");
+                result.BaselinePlan = await _queryExecutor.CaptureExecutionPlanAsync(baselineProbeSql, cancellationToken);
+                result.OptimizedPlan = await _queryExecutor.CaptureExecutionPlanAsync(optimizedProbeSql, cancellationToken);
+                result.PlanComparison = ExecutionPlanComparer.Compare(result.BaselinePlan, result.OptimizedPlan);
+
                 ReportStage("Running Baseline Warmups");
                 for (var i = 0; i < warmupRuns; i++)
                 {
@@ -162,13 +179,39 @@ public sealed class BenchmarkPipeline
                 result.Baseline = new BenchmarkRunsSummary
                 {
                     Runs = baselineRuns,
-                    Statistics = BuildStatisticsSummary(baselineRuns.Select(r => r.DurationMs))
+                    Statistics = BuildStatisticsSummary(baselineRuns.Select(r => (decimal?)r.DurationMs)),
+                    LogicalReadsStatistics = BuildStatisticsSummary(baselineRuns.Select(r => ToDecimal(r.LogicalReads))),
+                    PhysicalReadsStatistics = BuildStatisticsSummary(baselineRuns.Select(r => ToDecimal(r.PhysicalReads))),
+                    ScanCountStatistics = BuildStatisticsSummary(baselineRuns.Select(r => ToDecimal(r.ScanCount))),
+                    CpuTimeMsStatistics = BuildStatisticsSummary(baselineRuns.Select(r => r.CpuTimeMs)),
+                    SqlElapsedTimeMsStatistics = BuildStatisticsSummary(baselineRuns.Select(r => r.SqlElapsedTimeMs)),
+                    RequestedMemoryKbStatistics = BuildStatisticsSummary(baselineRuns.Select(r => ToDecimal(r.RequestedMemoryKb))),
+                    GrantedMemoryKbStatistics = BuildStatisticsSummary(baselineRuns.Select(r => ToDecimal(r.GrantedMemoryKb))),
+                    UsedMemoryKbStatistics = BuildStatisticsSummary(baselineRuns.Select(r => ToDecimal(r.UsedMemoryKb))),
+                    TempDbPagesStatistics = BuildStatisticsSummary(baselineRuns.Select(r => ToDecimal(r.TempDbPages))),
+                    TempDbAllocatedPagesStatistics = BuildStatisticsSummary(baselineRuns.Select(r => ToDecimal(r.TempDbAllocatedPages))),
+                    WorktableLogicalReadsStatistics = BuildStatisticsSummary(baselineRuns.Select(r => ToDecimal(r.WorktableLogicalReads))),
+                    DegreeOfParallelismStatistics = BuildStatisticsSummary(baselineRuns.Select(r => r.DegreeOfParallelism is null ? null : (decimal?)r.DegreeOfParallelism.Value)),
+                    ParallelOperatorsStatistics = BuildStatisticsSummary(baselineRuns.Select(r => r.ParallelOperators is null ? null : (decimal?)r.ParallelOperators.Value))
                 };
 
                 result.Optimized = new BenchmarkRunsSummary
                 {
                     Runs = optimizedRuns,
-                    Statistics = BuildStatisticsSummary(optimizedRuns.Select(r => r.DurationMs))
+                    Statistics = BuildStatisticsSummary(optimizedRuns.Select(r => (decimal?)r.DurationMs)),
+                    LogicalReadsStatistics = BuildStatisticsSummary(optimizedRuns.Select(r => ToDecimal(r.LogicalReads))),
+                    PhysicalReadsStatistics = BuildStatisticsSummary(optimizedRuns.Select(r => ToDecimal(r.PhysicalReads))),
+                    ScanCountStatistics = BuildStatisticsSummary(optimizedRuns.Select(r => ToDecimal(r.ScanCount))),
+                    CpuTimeMsStatistics = BuildStatisticsSummary(optimizedRuns.Select(r => r.CpuTimeMs)),
+                    SqlElapsedTimeMsStatistics = BuildStatisticsSummary(optimizedRuns.Select(r => r.SqlElapsedTimeMs)),
+                    RequestedMemoryKbStatistics = BuildStatisticsSummary(optimizedRuns.Select(r => ToDecimal(r.RequestedMemoryKb))),
+                    GrantedMemoryKbStatistics = BuildStatisticsSummary(optimizedRuns.Select(r => ToDecimal(r.GrantedMemoryKb))),
+                    UsedMemoryKbStatistics = BuildStatisticsSummary(optimizedRuns.Select(r => ToDecimal(r.UsedMemoryKb))),
+                    TempDbPagesStatistics = BuildStatisticsSummary(optimizedRuns.Select(r => ToDecimal(r.TempDbPages))),
+                    TempDbAllocatedPagesStatistics = BuildStatisticsSummary(optimizedRuns.Select(r => ToDecimal(r.TempDbAllocatedPages))),
+                    WorktableLogicalReadsStatistics = BuildStatisticsSummary(optimizedRuns.Select(r => ToDecimal(r.WorktableLogicalReads))),
+                    DegreeOfParallelismStatistics = BuildStatisticsSummary(optimizedRuns.Select(r => r.DegreeOfParallelism is null ? null : (decimal?)r.DegreeOfParallelism.Value)),
+                    ParallelOperatorsStatistics = BuildStatisticsSummary(optimizedRuns.Select(r => r.ParallelOperators is null ? null : (decimal?)r.ParallelOperators.Value))
                 };
 
                 ReportStage("Validating Results");
@@ -223,8 +266,19 @@ public sealed class BenchmarkPipeline
                     };
                 }
 
+                result.Improvement.LogicalReadsPercent = CalculateMetricImprovement(result.Baseline.LogicalReadsStatistics.Median, result.Optimized.LogicalReadsStatistics.Median);
+                result.Improvement.CpuTimePercent = CalculateMetricImprovement(result.Baseline.CpuTimeMsStatistics.Median, result.Optimized.CpuTimeMsStatistics.Median);
+                result.Improvement.SqlElapsedTimePercent = CalculateMetricImprovement(result.Baseline.SqlElapsedTimeMsStatistics.Median, result.Optimized.SqlElapsedTimeMsStatistics.Median);
+
                 result.Status = "Success";
                 result.ExitCode = 0;
+                ReportStage("Generating Advisor Analysis");
+                var history = repositoryInitialized && _benchmarkRepository is not null
+                    ? await _benchmarkRepository.GetHistoryAsync(latest: 100, experimentId: experiment.Id, cancellationToken: cancellationToken)
+                    : Array.Empty<BenchmarkHistoryRecord>();
+                var advisorAnalysis = _advisorEngine.Analyze(result, history);
+                result.AdvisorFindings = advisorAnalysis.Findings;
+                result.AdvisorRecommendations = advisorAnalysis.Recommendations;
             }
             catch
             {
@@ -267,6 +321,27 @@ public sealed class BenchmarkPipeline
         {
             result.CompletedUtc = DateTimeOffset.UtcNow;
             result.ExperimentHash = experiment.ExperimentHash;
+
+            if (repositoryInitialized && _benchmarkRepository is not null)
+            {
+                ReportStage("Persisting Results Repository");
+                try
+                {
+                    await _benchmarkRepository.StoreBenchmarkRunAsync(experiment, result, CancellationToken.None);
+                }
+                catch (Exception exception)
+                {
+                    result.Status = "Failed";
+                    result.ExitCode = 3;
+                    result.Failure = new FailureSummary
+                    {
+                        Stage = "Persisting Results Repository",
+                        Reason = exception.Message,
+                        TimestampUtc = DateTimeOffset.UtcNow
+                    };
+                }
+            }
+
             ReportStage("Saving Results");
             await ResultStore.SaveAsync(resultsRoot, result);
         }
@@ -277,31 +352,55 @@ public sealed class BenchmarkPipeline
     private static async Task<BenchmarkRunRecord> MeasureQueryAsync(IQueryExecutor queryExecutor, string sql, int sequenceNumber, string executionOrder, CancellationToken cancellationToken)
     {
         var stopwatch = Stopwatch.StartNew();
-        var rowsReturned = await queryExecutor.ExecuteQueryAndCountAsync(sql, cancellationToken);
+        var metrics = await queryExecutor.ExecuteQueryWithMetricsAsync(sql, cancellationToken);
         stopwatch.Stop();
 
         return new BenchmarkRunRecord
         {
             SequenceNumber = sequenceNumber,
             DurationMs = Convert.ToDecimal(stopwatch.Elapsed.TotalMilliseconds),
-            RowsReturned = rowsReturned,
+            RowsReturned = metrics.RowsReturned,
+            LogicalReads = metrics.LogicalReads,
+            PhysicalReads = metrics.PhysicalReads,
+            ScanCount = metrics.ScanCount,
+            CpuTimeMs = metrics.CpuTimeMs,
+            SqlElapsedTimeMs = metrics.SqlElapsedTimeMs,
+            RequestedMemoryKb = metrics.RequestedMemoryKb,
+            GrantedMemoryKb = metrics.GrantedMemoryKb,
+            UsedMemoryKb = metrics.UsedMemoryKb,
+            TempDbPages = metrics.TempDbPages,
+            TempDbAllocatedPages = metrics.TempDbAllocatedPages,
+            WorktableLogicalReads = metrics.WorktableLogicalReads,
+            DegreeOfParallelism = metrics.DegreeOfParallelism,
+            UsedParallelPlan = metrics.UsedParallelPlan,
+            ParallelOperators = metrics.ParallelOperators,
             ExecutionOrder = executionOrder
         };
     }
 
-    private static BenchmarkStatistics BuildStatisticsSummary(IEnumerable<decimal> metrics)
+    private static BenchmarkStatistics BuildStatisticsSummary(IEnumerable<decimal?> metrics)
     {
-        var values = metrics.ToList();
+        var values = metrics.Where(metric => metric.HasValue).Select(metric => metric!.Value).ToList();
         var stats = BenchmarkStatisticsCalculator.CalculateStatistics(values);
 
         return new BenchmarkStatistics
         {
+            SampleCount = values.Count,
             Min = stats.Min,
             Max = stats.Max,
             Average = stats.Average,
             Median = stats.Median,
             StandardDeviation = stats.StandardDeviation
         };
+    }
+
+    private static decimal? ToDecimal(long? value) => value is null ? null : value.Value;
+
+    private static decimal? CalculateMetricImprovement(decimal baselineMedian, decimal optimizedMedian)
+    {
+        return baselineMedian == 0m
+            ? null
+            : BenchmarkStatisticsCalculator.CalculateImprovement(baselineMedian, optimizedMedian);
     }
 
     private static bool IsExplicitPassValue(object? value)

@@ -13,7 +13,12 @@ public static class ExperimentRepository
         WriteIndented = true
     };
 
-    public static IReadOnlyList<ExperimentDefinition> List(string experimentsRoot, Action<string>? warning = null)
+    public static IReadOnlyList<ExperimentDefinition> List(
+        string experimentsRoot,
+        Action<string>? warning = null,
+        string? category = null,
+        string? difficulty = null,
+        string? tag = null)
     {
         if (!Directory.Exists(experimentsRoot))
         {
@@ -33,7 +38,14 @@ public static class ExperimentRepository
             try
             {
                 var experiment = Load(experimentPath);
-                if (!string.IsNullOrWhiteSpace(experiment.Id))
+                var matchesCategory = string.IsNullOrWhiteSpace(category)
+                    || string.Equals(experiment.Category, category, StringComparison.OrdinalIgnoreCase);
+                var matchesDifficulty = string.IsNullOrWhiteSpace(difficulty)
+                    || string.Equals(experiment.Difficulty, difficulty, StringComparison.OrdinalIgnoreCase);
+                var matchesTag = string.IsNullOrWhiteSpace(tag)
+                    || experiment.Tags.Any(value => string.Equals(value, tag, StringComparison.OrdinalIgnoreCase));
+
+                if (!string.IsNullOrWhiteSpace(experiment.Id) && matchesCategory && matchesDifficulty && matchesTag)
                 {
                     experiments.Add(experiment);
                 }
@@ -55,6 +67,7 @@ public static class ExperimentRepository
             ?? throw new InvalidOperationException($"Experiment file '{experimentPath}' is invalid.");
 
         experiment.ExperimentHash = ComputeExperimentHash(experimentPath, experimentDirectory, experiment);
+        experiment.DefinitionSnapshot = BuildDefinitionSnapshot(experimentDirectory, experiment);
         return experiment;
     }
 
@@ -97,6 +110,35 @@ public static class ExperimentRepository
         return Hash(builder.ToString());
     }
 
+    private static string BuildDefinitionSnapshot(string experimentDirectory, ExperimentDefinition experiment)
+    {
+        var scripts = new Dictionary<string, string>(StringComparer.Ordinal);
+        var scriptPaths = new[]
+        {
+            experiment.SetupScript,
+            experiment.ValidationScript,
+            experiment.BaselineScript,
+            experiment.OptimizedScript,
+            experiment.CleanupScript
+        };
+
+        foreach (var script in scriptPaths)
+        {
+            if (string.IsNullOrWhiteSpace(script))
+            {
+                continue;
+            }
+
+            var scriptPath = Path.Combine(experimentDirectory, script.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar));
+            if (File.Exists(scriptPath))
+            {
+                scripts[script] = File.ReadAllText(scriptPath);
+            }
+        }
+
+        return JsonSerializer.Serialize(new { definition = experiment, scripts }, SerializerOptions);
+    }
+
     private static string NormalizeLineEndings(string value)
     {
         return value.Replace("\r\n", "\n").Replace('\r', '\n');
@@ -119,5 +161,12 @@ public static class ResultStore
         var filePath = Path.Combine(directory, $"{result.RunId}.json");
         var json = JsonSerializer.Serialize(result, SerializerOptions);
         await File.WriteAllTextAsync(filePath, json);
+    }
+
+    public static async Task<BenchmarkResultDocument> LoadAsync(string filePath)
+    {
+        var json = await File.ReadAllTextAsync(filePath);
+        return JsonSerializer.Deserialize<BenchmarkResultDocument>(json, SerializerOptions)
+            ?? throw new InvalidOperationException($"Result file '{filePath}' is invalid.");
     }
 }

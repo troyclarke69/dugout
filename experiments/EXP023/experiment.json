@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP023",
+  "name": "Sort Strategy and Top N",
+  "description": "Compare ordering by a non-indexed measure with ordering by the clustered key.",
+  "category": "Sorting",
+  "difficulty": "Intermediate",
+  "tags": ["Sort", "TopN", "MemoryGrant"],
+  "learningObjectives": ["Recognize Sort operators.", "Inspect memory grants and TempDB activity for ordering."],
+  "baselineScript": "../shared/EXP023-baseline.sql",
+  "optimizedScript": "../shared/EXP023-optimized.sql"
+}

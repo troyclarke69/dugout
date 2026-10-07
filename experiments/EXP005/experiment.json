@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP005",
+  "name": "Filtered Index",
+  "description": "Compare a non-SARGable date predicate to a range predicate supported by a filtered index.",
+  "category": "Indexing",
+  "difficulty": "Intermediate",
+  "tags": ["FilteredIndex", "Date", "SARGability"],
+  "learningObjectives": ["Understand filtered-index eligibility.", "Compare a scan with a selective range seek."],
+  "setupScript": "../shared/EXP005-setup.sql",
+  "baselineScript": "../shared/EXP005-baseline.sql",
+  "optimizedScript": "../shared/EXP005-optimized.sql",
+  "cleanupScript": "../shared/EXP005-cleanup.sql"
+}

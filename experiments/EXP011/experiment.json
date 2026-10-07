@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP011",
+  "name": "GROUP BY Optimization",
+  "description": "Compare hash and ordered grouping while returning the same scalar total.",
+  "category": "Aggregations",
+  "difficulty": "Beginner",
+  "tags": ["GroupBy", "HashAggregate", "StreamAggregate"],
+  "learningObjectives": ["Recognize aggregate operators.", "Compare hash and ordered aggregation costs."],
+  "baselineScript": "../shared/EXP011-baseline.sql",
+  "optimizedScript": "../shared/EXP011-optimized.sql"
+}

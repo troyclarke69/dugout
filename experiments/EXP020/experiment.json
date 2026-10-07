@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP020",
+  "name": "CTE vs Inline Derived Table",
+  "description": "Compare two equivalent forms of a filtered aggregate.",
+  "category": "CTEs",
+  "difficulty": "Beginner",
+  "tags": ["CTE", "QueryDesign", "Inlining"],
+  "learningObjectives": ["Understand that a CTE is a query expression, not a materialized result.", "Compare equivalent query formulations."],
+  "baselineScript": "../shared/EXP020-baseline.sql",
+  "optimizedScript": "../shared/EXP020-optimized.sql"
+}

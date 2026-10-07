@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP017",
+  "name": "Memory Grant and Aggregation",
+  "description": "Compare hash and ordered aggregation and inspect runtime memory-grant metadata.",
+  "category": "Resource Usage",
+  "difficulty": "Intermediate",
+  "tags": ["MemoryGrant", "HashAggregate", "ResourceUsage"],
+  "learningObjectives": ["Read requested, granted, and used memory.", "Relate aggregate strategy to memory requirements."],
+  "baselineScript": "../shared/EXP017-baseline.sql",
+  "optimizedScript": "../shared/EXP017-optimized.sql"
+}

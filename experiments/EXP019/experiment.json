@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP019",
+  "name": "Parallel Query",
+  "description": "Compare an explicitly serial aggregate with the optimizer-selected parallel plan.",
+  "category": "Resource Usage",
+  "difficulty": "Intermediate",
+  "tags": ["Parallelism", "MAXDOP", "CPU"],
+  "learningObjectives": ["Inspect degree of parallelism and parallel operators.", "Compare CPU and elapsed time for serial and parallel execution."],
+  "baselineScript": "../shared/EXP019-baseline.sql",
+  "optimizedScript": "../shared/EXP019-optimized.sql"
+}

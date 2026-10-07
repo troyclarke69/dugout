@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP016",
+  "name": "Plan Reuse and Recompile",
+  "description": "Compare a reusable parameterized plan with statement-level recompilation.",
+  "category": "Parameter Sniffing",
+  "difficulty": "Advanced",
+  "tags": ["PlanReuse", "Recompile", "Parameters"],
+  "learningObjectives": ["Understand plan reuse tradeoffs.", "Observe compilation and execution behavior."],
+  "baselineScript": "../shared/EXP016-baseline.sql",
+  "optimizedScript": "../shared/EXP016-optimized.sql"
+}

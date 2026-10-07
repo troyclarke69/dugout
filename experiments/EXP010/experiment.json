@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP010",
+  "name": "Join Order",
+  "description": "Compare optimizer-selected order with a forced order across three filtered inputs.",
+  "category": "Joins",
+  "difficulty": "Advanced",
+  "tags": ["JoinOrder", "Cardinality", "ForceOrder"],
+  "learningObjectives": ["Observe join reordering.", "Understand the risks of overriding optimizer join order."],
+  "baselineScript": "../shared/EXP010-baseline.sql",
+  "optimizedScript": "../shared/EXP010-optimized.sql"
+}

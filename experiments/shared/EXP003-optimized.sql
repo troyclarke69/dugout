@@ -1,0 +1,3 @@
+SELECT SUM(TotalAmount) AS TotalAmount
+FROM dbo.Orders
+WHERE OrderId BETWEEN 200000 AND 400000;

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP003",
+  "name": "Clustered Index vs Heap",
+  "description": "Compare a range aggregate against a heap copy and the clustered primary-key table.",
+  "category": "Indexing",
+  "difficulty": "Intermediate",
+  "tags": ["Clustered", "Heap", "Storage"],
+  "learningObjectives": ["Relate row storage order to range access.", "Compare scan behavior for heap and clustered data."],
+  "setupScript": "../shared/EXP003-setup.sql",
+  "baselineScript": "../shared/EXP003-baseline.sql",
+  "optimizedScript": "../shared/EXP003-optimized.sql",
+  "cleanupScript": "../shared/EXP003-cleanup.sql"
+}

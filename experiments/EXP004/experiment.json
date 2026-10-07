@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP004",
+  "name": "Key Lookup Elimination",
+  "description": "Use a narrow index versus its covering counterpart for the same customer range.",
+  "category": "Indexing",
+  "difficulty": "Intermediate",
+  "tags": ["KeyLookup", "CoveringIndex", "Reads"],
+  "learningObjectives": ["Identify Key Lookup operators.", "Measure the impact of included columns."],
+  "setupScript": "../shared/EXP002-setup.sql",
+  "baselineScript": "../shared/EXP004-baseline.sql",
+  "optimizedScript": "../shared/EXP004-optimized.sql",
+  "cleanupScript": "../shared/EXP002-cleanup.sql"
+}

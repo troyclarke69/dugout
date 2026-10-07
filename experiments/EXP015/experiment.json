@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP015",
+  "name": "Parameter Sensitivity",
+  "description": "Compare a parameterized predicate optimized for unknown values with a value-specific plan.",
+  "category": "Parameter Sniffing",
+  "difficulty": "Advanced",
+  "tags": ["ParameterSensitivity", "OptimizeFor", "Cardinality"],
+  "learningObjectives": ["Understand parameter-sensitive estimates.", "Compare generic and value-specific plan choices."],
+  "baselineScript": "../shared/EXP015-baseline.sql",
+  "optimizedScript": "../shared/EXP015-optimized.sql"
+}

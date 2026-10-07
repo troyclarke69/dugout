@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP009",
+  "name": "Hash Match Join",
+  "description": "Compare hash and nested-loops joins for a larger selected input.",
+  "category": "Joins",
+  "difficulty": "Intermediate",
+  "tags": ["HashMatch", "NestedLoops", "Join"],
+  "learningObjectives": ["Identify hash-match join operators.", "Compare CPU and memory behavior across join strategies."],
+  "baselineScript": "../shared/EXP009-baseline.sql",
+  "optimizedScript": "../shared/EXP009-optimized.sql"
+}

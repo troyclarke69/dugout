@@ -1,0 +1,3 @@
+SELECT SUM(TotalAmount) AS TotalAmount
+FROM dbo.P6OrdersHeap
+WHERE OrderId BETWEEN 200000 AND 400000;

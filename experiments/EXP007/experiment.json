@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP007",
+  "name": "Nested Loops Join",
+  "description": "Compare forced nested-loops and hash join strategies on a selective self-join.",
+  "category": "Joins",
+  "difficulty": "Intermediate",
+  "tags": ["NestedLoops", "Join", "Selectivity"],
+  "learningObjectives": ["Recognize nested-loops operators.", "Relate join choice to input cardinality."],
+  "baselineScript": "../shared/EXP007-baseline.sql",
+  "optimizedScript": "../shared/EXP007-optimized.sql"
+}

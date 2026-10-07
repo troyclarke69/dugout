@@ -1,0 +1,46 @@
+@baseUrl = http://localhost:5080
+@experimentId = EXP001
+@runA = replace-with-run-id
+@runB = replace-with-run-id
+
+### OpenAPI document
+GET {{baseUrl}}/openapi/v1.json
+
+### List experiments
+GET {{baseUrl}}/api/experiments
+
+### Get an experiment
+GET {{baseUrl}}/api/experiments/{{experimentId}}
+
+### Run an experiment
+POST {{baseUrl}}/api/experiments/{{experimentId}}/run
+Content-Type: application/json
+
+{
+  "warmupRuns": 3,
+  "measuredRuns": 10
+}
+
+### List recent runs
+GET {{baseUrl}}/api/runs
+
+### Get a run
+GET {{baseUrl}}/api/runs/{{runA}}
+
+### Get experiment history
+GET {{baseUrl}}/api/history/{{experimentId}}
+
+### Get the experiment baseline
+GET {{baseUrl}}/api/baseline/{{experimentId}}
+
+### Compare two runs
+GET {{baseUrl}}/api/compare/{{runA}}/{{runB}}
+
+### Get advisor analysis
+GET {{baseUrl}}/api/runs/{{runA}}/analysis
+
+### Get execution plans
+GET {{baseUrl}}/api/runs/{{runA}}/plans
+
+### Missing run example
+GET {{baseUrl}}/api/runs/not-a-run

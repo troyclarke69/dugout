@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP013",
+  "name": "Hash Aggregate",
+  "description": "Compare hash grouping to ordered grouping over the same customer set.",
+  "category": "Aggregations",
+  "difficulty": "Intermediate",
+  "tags": ["HashAggregate", "Memory", "GroupBy"],
+  "learningObjectives": ["Recognize hash aggregate operators.", "Inspect memory-grant and spill signals."],
+  "baselineScript": "../shared/EXP013-baseline.sql",
+  "optimizedScript": "../shared/EXP013-optimized.sql"
+}

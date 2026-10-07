@@ -1,6 +1,6 @@
 # Dugout Architecture Principles
 
-## Core Principles
+## Core Principles **
 
 ### 1. Benchmark Accuracy Over Convenience
 

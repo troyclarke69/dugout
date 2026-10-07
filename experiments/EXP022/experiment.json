@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "EXP022",
+  "name": "Data Type Conversion on Predicates",
+  "description": "Compare conversion on an indexed integer column with a correctly typed predicate.",
+  "category": "Data Types",
+  "difficulty": "Beginner",
+  "tags": ["ImplicitConversion", "SARGability", "DataTypes"],
+  "learningObjectives": ["Identify conversions that prevent index seeks.", "Match parameter types to column types."],
+  "setupScript": "../shared/EXP022-setup.sql",
+  "baselineScript": "../shared/EXP022-baseline.sql",
+  "optimizedScript": "../shared/EXP022-optimized.sql",
+  "cleanupScript": "../shared/EXP022-cleanup.sql"
+}

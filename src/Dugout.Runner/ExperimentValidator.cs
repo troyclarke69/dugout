@@ -24,6 +24,12 @@ public static partial class ExperimentValidator
             errors.Add("Experiment name is required.");
         }
 
+        if (!string.IsNullOrWhiteSpace(experiment.Difficulty)
+            && !new[] { "Beginner", "Intermediate", "Advanced" }.Contains(experiment.Difficulty, StringComparer.OrdinalIgnoreCase))
+        {
+            errors.Add("Difficulty must be Beginner, Intermediate, or Advanced.");
+        }
+
         if (experiment.SchemaVersion != 1)
         {
             errors.Add("Schema version must be 1.");
